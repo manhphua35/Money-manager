@@ -8,7 +8,7 @@ const User = new Schema(
     password : {type : String, require : true},
     phone : {type : String, require : true},
     spending : [{type : Schema.Types.ObjectId, ref : 'Spendings'}],
-    income_stream : [{type : Schema.Types.ObjectId, ref : 'Income-Streams'}]
+    income : [{type : Schema.Types.ObjectId, ref : 'Incomes'}]
     },
     {
         timestamps : true, 

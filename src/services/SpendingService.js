@@ -57,6 +57,11 @@ class SpendingService {
     async deleteSpending(spendingId){
         try {
             await Spending.findOneAndDelete({_id : spendingId});
+            await User.updateOne(
+                {_id: userId},
+                {$pull: {income: incomeId}}
+            )
+            
             return ({
                 status : 'OK',
                 message : 'SUCCESS'

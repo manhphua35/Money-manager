@@ -55,6 +55,8 @@ class SpendingController{
         }
     }
 
+    
+
 }
 
 module.exports = new SpendingController();
