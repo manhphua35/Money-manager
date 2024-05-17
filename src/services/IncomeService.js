@@ -17,7 +17,7 @@ class IncomeService{
                 amount,
                 note,
                 user : user.id,
-                time
+                createdAt : time
             })
             await newIncome.save();
             await user.income.push(newIncome._id);
@@ -68,8 +68,54 @@ class IncomeService{
         } catch (error) {
             reject(error.message);
         }
-        
     }
+
+    async getIncomeInMonth(userId,selectMonth,selectYear){
+        try {
+            const user = await User.findById({_id : userId})
+            if(!user){
+                return ({
+                    status : 'ERR',
+                    message : 'The user is not defined'
+                })
+            }
+            const incomeInMonth = await Income.find({
+                _id : {$in : user.income},
+                createdAt: {
+                    $gte: new Date(selectYear, selectMonth - 1, 1),
+                    $lte: new Date(selectYear, selectMonth, 0)
+                }                
+            })
+            return ({
+                status : 'OK',
+                message : 'SUCCESS',
+                data : incomeInMonth
+            })
+        } catch (error) {
+            reject : error.message
+        }
+    }
+
+    async getchart(userId,selectMonth,selectYear){
+        try {
+            const user = User.findById({_id : userId});
+            if(!user){
+                return ({
+                    status : 'ERR',
+                    message : 'The user is not defined'
+                })
+            }
+            const dataInMonth = await this.getIncomeInMonth(userId,selectMonth,selectYear);
+            return ({
+                status : 'OK',
+                message : 'SUCCESS',
+                data : dataInMonth.data
+            })
+        } catch (error) {
+            reject : error.message
+        }
+    }
+    
 }
 
 module.exports = new IncomeService()

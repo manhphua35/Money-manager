@@ -2,8 +2,9 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 class UserService{
     async createUser(newUser){
-        const { name, email, password, confirmPassword, phone } = newUser;
+        const { name, email, password, phoneNumber } = newUser;
         try {
+            console.log(name, email, password, phoneNumber)
             const checkUser = await User.findOne({
                 email: email
             })
@@ -18,8 +19,9 @@ class UserService{
                 name,
                 email,
                 password: hash,
-                phone
+                phone : phoneNumber
             })
+            
             if (createdUser) {
                 return({
                     status: 'OK',
@@ -28,6 +30,7 @@ class UserService{
                 })
             }
         } catch (e) {
+            console.log(e.message)
             reject(e)
         }
     }

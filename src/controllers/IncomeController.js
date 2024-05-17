@@ -58,5 +58,35 @@ class IncomeController{
             })
         }
     }
+
+    async getIncomeInMonth(req,res){
+        const userId = req.cookies.userId;
+        const selectMonth = parseInt(req.query.month);
+        const selectYear = parseInt(req.query.year);
+        try {
+            const response = await IncomeService.getIncomeInMonth(userId,selectMonth,selectYear);
+            return res.status(200).json(response);
+        } catch (error) {
+            res.status(400).json({
+                status: 'ERR',
+                message: error.message
+            })
+        }
+    }
+
+    async getchart(req,res){
+        const userId = req.cookies.userId;
+        const selectMonth = parseInt(req.query.month);
+        const selectYear = parseInt(req.query.year);
+        try {
+            const response = await IncomeService.getchart(userId,selectMonth,selectYear);
+            return res.status(200).json(response);
+        } catch (error) {
+            res.status(400).json({
+                status: 'ERR',
+                message: error.message
+            })
+        }
+    }
 }
 module.exports = new IncomeController();

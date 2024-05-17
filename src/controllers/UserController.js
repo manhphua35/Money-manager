@@ -3,7 +3,7 @@ const UserService = require('../services/UserService');
 class UserController{
     async createUser(req,res){
         try {
-            const { name, email, password, confirmPassword, phone } = req.body
+            const { name, email, password, confirmPassword, phoneNumber } = req.body
             const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
             const isCheckEmail = reg.test(email)
             if (!email || !password || !confirmPassword) {
@@ -49,7 +49,7 @@ class UserController{
             }
             const response = await UserService.loginUser(req.body)
             res.cookie('userId', response.data, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: false,
                 sameSite: 'strict',
                 path: '/',
@@ -64,7 +64,7 @@ class UserController{
 
     async logout(req,res){
         try {
-            res.clearCookie('userId')
+            res.clearCookie('userId', { path: '/' });
             return res.status(200).json({
                 status: 'OK',
                 message: 'Logout successfully'

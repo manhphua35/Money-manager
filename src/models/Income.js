@@ -7,7 +7,7 @@ const Income = new Schema(
         amount: { type: Number, required: true }, 
         note: { type: String }, 
         user: { type: Schema.Types.ObjectId, ref: 'User' }, 
-        time: { type: Date, default: Date.now, required: true } 
+        createdAt: { type: Date, default: Date.now, required: true } 
     }
 );
 

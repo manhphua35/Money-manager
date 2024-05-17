@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 const Spending = new Schema(
     {
-        action : {type : String, require : true},
-        prices : {type : Number, require : true},
+        action : {type : String, required : true},
+        prices : {type : Number, required : true},
         note : {type: String},
         user : {type : Schema.Types.ObjectId, ref : 'User'},
-        time : {type : Date, default : Date.now, require : true}
+        createdAt : {type : Date, default : Date.now, required : true}
     }
 )
 
