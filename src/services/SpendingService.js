@@ -71,31 +71,81 @@ class SpendingService {
         }
     }
 
-    async getSpendingInMonth(userId,selectMonth,selectYear){
+    async getSpendingInMonth(userId, selectMonth, selectYear, page, limit) {
         try {
-            const user = await User.findById({_id : userId})
-            if(!user){
-                return ({
-                    status : 'ERR',
-                    message : 'The user is not defined'
-                })
+            const user = await User.findById({ _id: userId });
+            if (!user) {
+                return {
+                    status: 'ERR',
+                    message: 'The user is not defined'
+                };
             }
-            const spendingInMonth = await Spending.find({
-                _id : {$in : user.spending},
+    
+            const skip = (page - 1) * limit;
+    
+            // Find spending activities within the selected month and year
+            const spendingInMonth = await Spending.aggregate([
+                {
+                    $match: {
+                        _id: { $in: user.spending },
+                        createdAt: {
+                            $gte: new Date(selectYear, selectMonth - 1, 1),
+                            $lte: new Date(selectYear, selectMonth, 0)
+                        }
+                    }
+                },
+                {
+                    $sort: { createdAt: -1 } // Sort by date in descending order
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: limit
+                },
+                {
+                    $group: {
+                        _id: {
+                            day: { $dayOfMonth: "$createdAt" },
+                            month: { $month: "$createdAt" },
+                            year: { $year: "$createdAt" }
+                        },
+                        totalSpent: { $sum: "$prices" },
+                        activities: { $push: "$$ROOT" }
+                    }
+                },
+                {
+                    $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 } // Sort groups in descending order
+                }
+            ]);
+    
+            const total = await Spending.countDocuments({
+                _id: { $in: user.spending },
                 createdAt: {
                     $gte: new Date(selectYear, selectMonth - 1, 1),
                     $lte: new Date(selectYear, selectMonth, 0)
-                }                
-            })
-            return ({
-                status : 'OK',
-                message : 'SUCCESS',
-                data : spendingInMonth
-            })
+                }
+            });
+    
+            return {
+                status: 'OK',
+                message: 'SUCCESS',
+                data: spendingInMonth,
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalItems: total
+            };
         } catch (error) {
-            reject : error.message
+            return {
+                status: 'ERR',
+                message: error.message
+            };
         }
     }
+    
+      
+      
+      
 
     async getStaticsInMonth(userId,selectedMonth,selectedYear){
         if (!userId) {
@@ -112,8 +162,8 @@ class SpendingService {
                     message : "Can not find the user"
                 }
             }
-            const currentMonthStartDate = new Date(selectedYear, selectedMonth, 1);
-            const currentMonthEndDate = new Date(selectedYear, selectedMonth + 1, 0);
+            const currentMonthStartDate = new Date(selectedYear, selectedMonth-1, 1);
+            const currentMonthEndDate = new Date(selectedYear, selectedMonth, 0);
 
             const spendings = await Spending.find({
                 _id: { $in: user.spending },

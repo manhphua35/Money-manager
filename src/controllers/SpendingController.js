@@ -66,20 +66,23 @@ class SpendingController{
         }
     }
     
-    async getSpendingInMonth(req,res){
+    async getSpendingInMonth(req, res) {
         const userId = req.cookies.userId;
         const selectMonth = parseInt(req.query.month);
         const selectYear = parseInt(req.query.year);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
         try {
-            const response = await SpendingService.getSpendingInMonth(userId,selectMonth,selectYear);
-            return res.status(200).json(response);
+          const response = await SpendingService.getSpendingInMonth(userId, selectMonth, selectYear, page, limit);
+          return res.status(200).json(response);
         } catch (error) {
-            res.status(400).json({
-                status: 'ERR',
-                message: error.message
-            })
+          res.status(400).json({
+            status: 'ERR',
+            message: error.message
+          });
         }
-    }
+      }
+      
 
     async getStaticsInMonth(req,res){
         const userId = req.cookies.userId;
