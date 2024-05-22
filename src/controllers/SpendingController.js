@@ -26,11 +26,10 @@ class SpendingController{
     }
 
     async updateSpending(req,res){
-        const {action, prices, note, time} = req.body;
+        const {action, prices, note, createdAt} = req.body;
         const spendingId = req.params.id;
-        console.log(spendingId)
         try {
-            if(!action || !prices || !time){
+            if(!action || !prices || !createdAt){
                 res.status(400).json({
                     status: 'ERR',
                     message: 'Please login'
@@ -100,26 +99,27 @@ class SpendingController{
     }
 
     
-    async getchart(req,res){
+    async getchart(req, res) {
         const userId = req.cookies.userId;
-        if(!userId){
-            res.status(400).json({
+        if (!userId) {
+            return res.status(400).json({
                 status: 'ERR',
                 message: 'Please login'
-            })
+            });
         }
         const selectedMonth = parseInt(req.query.month);
         const selectedYear = parseInt(req.query.year);
         try {
-            const response = await SpendingService.getchart(userId,selectedMonth,selectedYear);
+            const response = await SpendingService.getchart(userId, selectedMonth, selectedYear);
             return res.status(200).json(response);
         } catch (error) {
-            res.status(400).json({
+            return res.status(400).json({
                 status: 'ERR',
                 message: error.message
-            })
+            });
         }
     }
+    
 
 }
 
