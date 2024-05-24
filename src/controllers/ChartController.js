@@ -3,7 +3,6 @@ const ChartService = require('../services/ChartService');
 
 class ChartController {
   async getChartSpendingInMonth(req, res) {
-    // console.log(1)
     const userId = req.cookies.userId;
     if (!userId) {
       return res.status(400).json({
