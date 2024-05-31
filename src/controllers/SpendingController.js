@@ -120,6 +120,18 @@ class SpendingController{
         }
     }
     
+    async getReport(req, res){
+        try {
+          const { month, year } = req.query;
+          const buffer = await SpendingService.getReport(parseInt(month), parseInt(year));
+          res.setHeader('Content-Disposition', `attachment; filename=Spending_Report_${month}_${year}.xlsx`);
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          res.send(buffer);
+        } catch (error) {
+          console.error("Error generating report: ", error);
+          res.status(500).json({ message: error.message });
+        }
+      };
 
 }
 

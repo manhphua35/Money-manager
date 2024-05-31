@@ -8,4 +8,5 @@ router.delete('/delete/:id', SpendingController.deleteSpending);
 router.get('/getSpendingInMonth', SpendingController.getSpendingInMonth);
 router.get('/getStaticsInMonth', SpendingController.getStaticsInMonth);
 router.get('/getchart', SpendingController.getchart);
+router.get('/report/download', SpendingController.getReport);
 module.exports = router;

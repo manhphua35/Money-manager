@@ -124,5 +124,16 @@ class IncomeController{
         }
     }
     
+    async getReport(req,res){
+        try {
+            const { month, year } = req.query;
+            const buffer = await IncomeService.getReport(parseInt(month), parseInt(year));
+            res.setHeader('Content-Disposition', `attachment; filename=Income_Report_${month}_${year}.xlsx`);
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.send(buffer);
+          } catch (error) {
+            res.status(500).json({ message: error.message });
+          }
+    }
 }
 module.exports = new IncomeController();

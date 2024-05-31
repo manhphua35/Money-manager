@@ -7,4 +7,5 @@ router.put('/update/:id', IncomeController.updateIncome);
 router.delete('/delete/:id', IncomeController.deleteIncome);
 router.get('/getIncomeInMonth', IncomeController.getIncomeInMonth);
 router.get('/getStaticsInMonth', IncomeController.getStaticsInMonth);
+router.get('/report/download', IncomeController.getReport);
 module.exports = router;
