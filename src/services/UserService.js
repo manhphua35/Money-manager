@@ -1,7 +1,8 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-class UserService{
-    async createUser(newUser){
+
+class UserService {
+    async createUser(newUser) {
         const { name, email, password, phoneNumber } = newUser;
         try {
             const checkUser = await User.findOne({ email: email });
@@ -9,7 +10,7 @@ class UserService{
             if (checkUser !== null) {
                 return {
                     status: 'ERR',
-                    message: 'The email is already in use'
+                    message: 'Email đã được sử dụng'
                 };
             }
             const hash = bcrypt.hashSync(password, 10);
@@ -23,67 +24,69 @@ class UserService{
             if (createdUser) {
                 return {
                     status: 'OK',
-                    message: 'User created successfully',
+                    message: 'Tạo tài khoản thành công',
                     data: createdUser
                 };
             }
         } catch (error) {
             return {
                 status: 'ERR',
-                message: 'Error creating user',
+                message: 'Lỗi khi tạo tài khoản',
                 error: error.message
             };
         }
     }
     
-    async loginUser(userLogin){
-        const { email, password } = userLogin
+    async loginUser(userLogin) {
+        const { email, password } = userLogin;
         try {
-            const checkUser = await User.findOne({
-                email: email
-            })
+            const checkUser = await User.findOne({ email: email });
             if (checkUser === null) {
-                return({
+                return {
                     status: 'ERR',
-                    message: 'The user is not defined'
-                })
+                    message: 'Người dùng không tồn tại'
+                };
             }
-            const comparePassword = bcrypt.compareSync(password, checkUser.password)
+            const comparePassword = bcrypt.compareSync(password, checkUser.password);
             if (!comparePassword) {
-                return({
+                return {
                     status: 'ERR',
-                    message: 'The password or user is incorrect'
-                })
+                    message: 'Mật khẩu hoặc người dùng không chính xác'
+                };
             }
-            return({
+            return {
                 status: 'OK',
-                message: 'SUCCESS',
+                message: 'Đăng nhập thành công',
                 data: checkUser.id
-        })
+            };
         } catch (error) {
-            reject(error)
-        }    
+            return {
+                status: 'ERR',
+                message: 'Lỗi khi đăng nhập',
+                error: error.message
+            };
+        }
     }
 
-    async getProfile(userId){
+    async getProfile(userId) {
         try {
-            const user = await User.findById(userId).select('-password -spending -income -createdAt -updatedAt -__v -_id')
+            const user = await User.findById(userId).select('-password -spending -income -createdAt -updatedAt -__v -_id');
             if (!user) {
                 return {
                     status: 'ERR',
-                    message: 'User not found'
+                    message: 'Không tìm thấy người dùng'
                 };
             }
     
             return {
                 status: 'OK',
-                message: 'User profile fetched successfully',
+                message: 'Lấy thông tin người dùng thành công',
                 data: user
             };
         } catch (error) {
             return {
                 status: 'ERR',
-                message: 'Error fetching user profile',
+                message: 'Lỗi khi lấy thông tin người dùng',
                 error: error.message
             };
         }
@@ -96,19 +99,19 @@ class UserService{
             if (!updatedUser) {
                 return {
                     status: 'ERR',
-                    message: 'User not found'
+                    message: 'Không tìm thấy người dùng'
                 };
             }
     
             return {
                 status: 'OK',
-                message: 'User data updated successfully',
+                message: 'Cập nhật thông tin người dùng thành công',
                 data: updatedUser
             };
         } catch (error) {
             return {
                 status: 'ERR',
-                message: 'Error updating user data',
+                message: 'Lỗi khi cập nhật thông tin người dùng',
                 error: error.message
             };
         }
@@ -121,7 +124,7 @@ class UserService{
             if (!user) {
                 return {
                     status: 'ERR',
-                    message: 'User not found'
+                    message: 'Không tìm thấy người dùng'
                 };
             }
     
@@ -129,7 +132,7 @@ class UserService{
             if (!isMatch) {
                 return {
                     status: 'ERR',
-                    message: 'Old password is incorrect'
+                    message: 'Mật khẩu cũ không chính xác'
                 };
             }
     
@@ -139,12 +142,12 @@ class UserService{
     
             return {
                 status: 'OK',
-                message: 'Password changed successfully'
+                message: 'Đổi mật khẩu thành công'
             };
         } catch (error) {
             return {
                 status: 'ERR',
-                message: 'Error changing password',
+                message: 'Lỗi khi đổi mật khẩu',
                 error: error.message
             };
         }
